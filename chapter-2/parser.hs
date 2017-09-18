@@ -1,4 +1,4 @@
-// Chapter 2 code block
+-- Chapter 2 code block
 
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
@@ -45,7 +45,10 @@ parseAtom = do
                          _    -> Atom atom
 
 parseNumber :: Parser LispVal
-parseNumber = liftM (Number . read) $ many1 digit
+parseNumber = do
+                digitSequence <- many1 digit
+                let number = read digitSequence
+                return $ Number number
 
 parseExpr :: Parser LispVal
 parseExpr = parseAtom
