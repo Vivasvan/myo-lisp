@@ -3,6 +3,7 @@
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
 import Control.Monad
+import Numeric
 
 symbol :: Parser Char
 symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
@@ -61,9 +62,39 @@ parseNumber = do
                 let number = read digitSequence
                 return $ Number number
 
+parseDecNumber :: Parser LispVal
+parseDecNumber = do 
+                numberLiteralWithType <- char '#'
+                decNumberLiteral <- char 'd'
+                digits <- many1 digit
+                numberValue <- read digits
+                return $ Number numberValue
+
+parseHexNumber :: Parser LispVal
+parseHexNumber = do 
+                numberLiteralWithType <- char '#'
+                hexNumberLiteral <- char 'x'
+                digits <- many1 digit                
+                numberValue <- readHex digits
+                return $ Number numberValue
+
+                
+parseOctNumber :: Parser LispVal
+parseOctNumber = do 
+                numberLiteralWithType <- char '#'
+                octalNumberLiteral <- char 'o'
+                digits <- many1 digit
+                numberValue <- readOct digits
+                return $ Number numberValue
+
+
 parseExpr :: Parser LispVal
 parseExpr = parseAtom
          <|> parseString
          <|> parseNumber
+         <|> parseOctNumber
+         <|> parseDecNumber
+         <|> parseHexNumber
+
 
 
